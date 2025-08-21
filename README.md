@@ -117,32 +117,7 @@ npm run build && npm start
 - `/profile` — Profile card (name, email, avatar)
 - `/unauthenticated` — Sign-in prompt with callback redirect
 
-## Troubleshooting
-
-- "The table public.Tag does not exist":
-  - Ensure `.env.local` has the correct `DATABASE_URL`.
-  - Apply migrations: `npx prisma migrate dev`.
-  - Restart the dev server after creating/updating env files.
-- Next.js `searchParams` types in App Router (Next 15):
-  - Pages use `searchParams: Promise<Record<string, string | string[] | undefined>>` under the hood. This repo awaits the promise before use.
-- If you see odd module runtime errors after edits:
-  - Clear the build cache: `rm -rf .next` and restart `npm run dev`.
-
 ## Security
 
 - All mutations re-check the session on the server using `auth()`.
 - Bookmark/Tag operations are scoped by `userId`.
-
-## License
-
-MIT
-
----
-
-## Resume-ready bullets
-
-- Built a full-stack Bookmark Manager with Next.js App Router, Auth.js, Prisma, and PostgreSQL enabling users to save, tag, and filter links.
-- Implemented secure Google OAuth with Auth.js Prisma Adapter; scoped all CRUD to the authenticated user.
-- Designed a modern UI with Tailwind CSS (cards, tag pills, gradient shell) and server action–driven forms.
-- Modeled many-to-many `Bookmark ↔ Tag` relations in Prisma with unique per-user tag constraints.
-- Optimized DX and reliability with server actions, route revalidation, and typed `searchParams` in Next.js 15.
