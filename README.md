@@ -2,6 +2,8 @@
 
 Save links with tags, list them, and filter fast. Built with Next.js App Router, Auth.js (NextAuth), Prisma, and PostgreSQL.
 
+<img width="1607" height="820" alt="image" src="https://github.com/user-attachments/assets/282cc308-e721-4f68-aa05-cd8cb4533e21" />
+
 ## Features
 
 - Add bookmarks (URL, title, optional description)
