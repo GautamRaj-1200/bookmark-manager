@@ -1,36 +1,148 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bookmark Manager
+
+Save links with tags, list them, and filter fast. Built with Next.js App Router, Auth.js (NextAuth), Prisma, and PostgreSQL.
+
+## Features
+
+- Add bookmarks (URL, title, optional description)
+- Tagging with many-to-many relation and per-user tag space
+- List bookmarks for the signed-in user
+- Filter by tag (query string `?tag=...`)
+- Edit bookmark (URL/title/description/tags)
+- Delete bookmark
+- Delete tag (removes tag and relations for the current user)
+- Google Sign-In via Auth.js
+
+## Tech Stack
+
+- Next.js 15 (App Router)
+- Auth.js (NextAuth v5) with Prisma Adapter
+- Prisma ORM (PostgreSQL)
+- Tailwind CSS v4
+- TypeScript
+
+## Project Structure
+
+```
+src/
+  app/
+    api/auth/[...nextauth]/route.ts   # Auth.js route
+    bookmarks/
+      actions.ts                      # Server actions for add/edit/delete
+      page.tsx                        # Bookmarks UI (list/filter/add/edit)
+    profile/page.tsx                  # Profile UI
+    unauthenticated/page.tsx          # Sign-in prompt + callback
+    layout.tsx                        # App chrome, gradient bg, navbar
+    page.tsx                          # Home (hero + CTAs)
+  components/
+    Navbar.tsx                        # Top nav with brand and links
+  lib/
+    prisma.ts                         # Prisma client singleton
+prisma/
+  schema.prisma                       # Models (User, Account, Session, Bookmark, Tag)
+  migrations/                         # Generated migrations
+```
 
 ## Getting Started
 
-First, run the development server:
+### 1) Prerequisites
+
+- Node.js 18+
+- PostgreSQL 14+
+
+### 2) Install
+
+```bash
+npm install
+```
+
+### 3) Environment variables
+
+Create `.env.local` at the project root:
+
+```bash
+# Postgres connection
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/bookmarks?schema=public"
+
+# Auth.js Google provider
+AUTH_GOOGLE_ID="your-google-oauth-client-id"
+AUTH_GOOGLE_SECRET="your-google-oauth-client-secret"
+
+# Auth.js secret (any strong random string)
+AUTH_SECRET="your-strong-random-secret"
+```
+
+### 4) Database migration
+
+```bash
+npx prisma migrate dev
+```
+
+This creates the tables for `User`, `Account`, `Session`, `Bookmark`, `Tag`, and the join table.
+
+### 5) Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Sign in with Google from the navbar.
+- Go to `/bookmarks` to add and manage bookmarks.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 6) Build
 
-## Learn More
+```bash
+npm run build && npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## How it Works (no custom API routes needed)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Mutations (add/edit/delete) use Next.js Server Actions defined in `src/app/bookmarks/actions.ts` with `"use server"` at the top of the module.
+- Forms in `src/app/bookmarks/page.tsx` post directly to those actions via `action={serverAction}`.
+- After each mutation, the UI is refreshed via `revalidatePath("/bookmarks")`.
+- Data listing happens server-side in the page component using Prisma.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database Models (Prisma)
 
-## Deploy on Vercel
+- `Bookmark`: `id`, `userId`, `url`, `title`, `description?`, `createdAt`, `tags[]`
+- `Tag`: `id`, `userId`, `name` (unique per user), `createdAt`, `bookmarks[]`
+- `User`, `Account`, `Session` from Auth.js adapter
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/` — Home (hero + CTAs)
+- `/bookmarks` — Add/list/filter/edit/delete bookmarks and delete tags
+- `/profile` — Profile card (name, email, avatar)
+- `/unauthenticated` — Sign-in prompt with callback redirect
+
+## Troubleshooting
+
+- "The table public.Tag does not exist":
+  - Ensure `.env.local` has the correct `DATABASE_URL`.
+  - Apply migrations: `npx prisma migrate dev`.
+  - Restart the dev server after creating/updating env files.
+- Next.js `searchParams` types in App Router (Next 15):
+  - Pages use `searchParams: Promise<Record<string, string | string[] | undefined>>` under the hood. This repo awaits the promise before use.
+- If you see odd module runtime errors after edits:
+  - Clear the build cache: `rm -rf .next` and restart `npm run dev`.
+
+## Security
+
+- All mutations re-check the session on the server using `auth()`.
+- Bookmark/Tag operations are scoped by `userId`.
+
+## License
+
+MIT
+
+---
+
+## Resume-ready bullets
+
+- Built a full-stack Bookmark Manager with Next.js App Router, Auth.js, Prisma, and PostgreSQL enabling users to save, tag, and filter links.
+- Implemented secure Google OAuth with Auth.js Prisma Adapter; scoped all CRUD to the authenticated user.
+- Designed a modern UI with Tailwind CSS (cards, tag pills, gradient shell) and server action–driven forms.
+- Modeled many-to-many `Bookmark ↔ Tag` relations in Prisma with unique per-user tag constraints.
+- Optimized DX and reliability with server actions, route revalidation, and typed `searchParams` in Next.js 15.

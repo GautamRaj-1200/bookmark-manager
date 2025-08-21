@@ -5,13 +5,16 @@ import { redirect } from "next/navigation";
 const Unauthenticated = async ({
   searchParams,
 }: {
-  searchParams: { callbackUrl?: string };
+  searchParams: Promise<{ callbackUrl?: string }>;
 }) => {
   const session = await auth();
 
   if (session?.user) {
-    redirect(searchParams.callbackUrl || "/profile");
+    const { callbackUrl } = await searchParams;
+    redirect(callbackUrl || "/profile");
   }
+
+  const { callbackUrl } = await searchParams;
 
   return (
     <div className="m-2">
@@ -20,7 +23,7 @@ const Unauthenticated = async ({
         action={async () => {
           "use server";
           await signIn("google", {
-            redirectTo: searchParams.callbackUrl || "/profile", // pass callbackUrl here
+            redirectTo: callbackUrl || "/profile", // pass callbackUrl here
           });
         }}
       >

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Auth.js Google Auth",
-  description: "Google Auth with postgres.",
+  title: "Bookmark Manager",
+  description: "Save and organize links with tags.",
 };
 
 export default function RootLayout({
@@ -26,12 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-900 text-zinc-100`}
       >
-        <div className="max-w-lg mx-auto">
-          <Navbar />
-          {children}
-        </div>
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 py-6">{children}</div>
       </body>
     </html>
   );
