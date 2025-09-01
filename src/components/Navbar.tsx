@@ -13,7 +13,7 @@ const Navbar = () => {
               Bookmark Manager
             </span>
           </Link>
-          <ul className="flex gap-3 items-center text-sm">
+          <ul className="flex gap-3 items-center text-md">
             <li>
               <Link
                 href="/bookmarks"
