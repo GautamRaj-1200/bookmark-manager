@@ -25,7 +25,12 @@ export default async function BookmarksPage({
 
   const [tags, bookmarks] = await Promise.all([
     prisma.tag.findMany({
-      where: { userId },
+      where: {
+        userId,
+        bookmarks: {
+          some: {}, // Only tags that have at least one bookmark
+        },
+      },
       orderBy: { name: "asc" },
     }),
     prisma.bookmark.findMany({
@@ -46,6 +51,7 @@ export default async function BookmarksPage({
               OR: [
                 { title: { contains: searchQuery, mode: "insensitive" } },
                 { description: { contains: searchQuery, mode: "insensitive" } },
+                { summary: { contains: searchQuery, mode: "insensitive" } },
                 { url: { contains: searchQuery, mode: "insensitive" } },
               ],
             }

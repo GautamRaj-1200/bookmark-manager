@@ -10,6 +10,7 @@ interface Bookmark {
   url: string;
   title: string;
   description: string | null;
+  summary: string | null;
   tags: Tag[];
 }
 
