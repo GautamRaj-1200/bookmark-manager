@@ -1,5 +1,3 @@
-import { deleteTag } from "@/app/bookmarks/actions";
-
 interface Tag {
   id: string;
   name: string;
@@ -54,37 +52,29 @@ export default function SearchAndFilter({
               ? `/bookmarks?search=${encodeURIComponent(searchQuery)}`
               : "/bookmarks"
           }
-          className={`px-2 py-1 rounded border ${
-            !activeTag ? "bg-white/10 border-white/10" : "border-white/10"
+          className={`cursor-pointer inline-flex items-center text-xs px-3 py-1.5 rounded-full transition-all duration-200 ${
+            !activeTag
+              ? "bg-blue-500/20 ring-1 ring-blue-500/50 text-blue-200"
+              : "bg-zinc-800/50 ring-1 ring-zinc-600 text-zinc-400 hover:bg-zinc-700/50"
           }`}
         >
           All
         </a>
         {tags.map((t) => (
-          <div key={t.id} className="flex items-center gap-1">
-            <a
-              href={`/bookmarks?tag=${encodeURIComponent(t.name)}${
-                searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
-              }`}
-              className={`px-2 py-1 rounded border ${
-                activeTag === t.name
-                  ? "bg-white/10 border-white/10"
-                  : "border-white/10"
-              }`}
-            >
-              {t.name}
-            </a>
-            <form action={deleteTag}>
-              <input type="hidden" name="tagId" value={t.id} />
-              <button
-                type="submit"
-                title="Delete tag"
-                className="text-xs px-1 rounded ring-1 ring-white/10 hover:bg-white/10"
-              >
-                ×
-              </button>
-            </form>
-          </div>
+          <a
+            key={t.id}
+            href={`/bookmarks?tag=${encodeURIComponent(t.name)}${
+              searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""
+            }`}
+            className={`cursor-pointer inline-flex items-center text-xs px-3 py-1.5 rounded-full transition-all duration-200 ${
+              activeTag === t.name
+                ? "bg-blue-500/20 ring-1 ring-blue-500/50 text-blue-200"
+                : "bg-blue-500/10 ring-1 ring-blue-500/30 text-blue-300 hover:bg-blue-500/20 hover:ring-blue-500/50"
+            }`}
+          >
+            <span className="mr-1">#</span>
+            {t.name}
+          </a>
         ))}
       </div>
 

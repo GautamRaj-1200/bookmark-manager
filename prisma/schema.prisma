@@ -94,6 +94,7 @@ model Bookmark {
   url         String
   title       String
   description String?
+  summary     String?   // AI-generated summary
   createdAt   DateTime  @default(now())
 
   // Many-to-many with Tag (implicit join table)
